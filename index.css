@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .subpage-title{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .subtitle {
+    font-size: 24px;
+    color: #666;
+  }
+
+  .logo {
+    width: 100px; /* Customize the logo size */
+    height: auto;
+    margin-bottom: 20px;
+    /* Add any custom styling for the logo here */
+  }
