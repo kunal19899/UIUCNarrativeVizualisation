@@ -1,29 +1,41 @@
 document.addEventListener("DOMContentLoaded", function() {
   // Load the CSV file using D3.js
   d3.csv("insurance.csv").then(function(data) {
-    
+  console.log(data);
   // Set up chart parameters
-  const width = 600;
-  const height = 400;
-  const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+  const width = 800;
+  const height = 500;
+  const margin = { top: 50, right: 50, bottom: 50, left: 80 };
+
+  // Group the data by age and calculate the average charges
+  const averageData = d3.rollups(
+    data,
+    v => d3.mean(v, d => d.charges),
+    d => d.age
+  );
+
+  // Convert the averageData array to objects with age and average_cost properties
+  const averageDataset = averageData.map(([age, average_cost]) => ({
+    age: age,
+    average_cost: average_cost
+  }));
 
   // Create an SVG element with margins
-  const svg = d3.select("#chart-container")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+  const svg = d3.select("svg")
+    .attr("width", width + 2*margin.left)
+    .attr("height", height+ 2*margin.top);
 
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   // Create a scale for the x-axis (age)
   const xScale = d3.scaleLinear()
-    .domain(d3.extent(dataset, d => d.age)) // Use the extent of age values as the domain
+    .domain([15, 70]) // Use the extent of age values as the domain
     .range([0, innerWidth]);
 
   // Create a scale for the y-axis (insurance cost)
   const yScale = d3.scaleLinear()
-    .domain([0, d3.max(dataset, d => d.insurance_cost)]) // Use the maximum insurance_cost value as the domain
+    .domain([0, 27000])//d3.max(averageDataset, d => d.average_cost)]) // Use the maximum insurance_cost value as the domain
     .range([innerHeight, 0]);
 
   // Create a group (g) element to hold the chart
@@ -31,13 +43,13 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
   // Create the circles (data points) for the scatter plot
-  chartGroup.selectAll(".circle")
-    .data(dataset)
+  const circles = chartGroup.selectAll(".circle")
+    .data(averageDataset)
     .enter()
     .append("circle")
     .attr("class", "circle")
     .attr("cx", d => xScale(d.age))
-    .attr("cy", d => yScale(d.insurance_cost))
+    .attr("cy", d => yScale(d.average_cost))
     .attr("r", 5) // Set the circle radius
 
   // Create x-axis
@@ -53,9 +65,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Add labels for the axes
   svg.append("text")
-    .attr("transform", `translate(${width / 2}, ${height - margin.bottom})`)
+    .attr("transform", `translate(${width / 2}, ${height})`)
     .style("text-anchor", "middle")
-    .text("Age");
+    .text("Age of Insuree");
 
   svg.append("text")
     .attr("transform", "rotate(-90)")
@@ -63,8 +75,8 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("x", 0 - height / 2)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("Insurance Cost");
-    console.log(data);
+    .text("Average Insurance Charges");
+    
   })
   .catch(function(error) {
     // If there's an error loading the data, handle it here
