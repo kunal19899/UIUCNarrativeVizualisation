@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
   // Load the CSV file using D3.js
-  d3.csv("/Users/kunalsamant/Documents/UIUC/Summer%202023/DataViz/UIUCNarrativeVizualisation/data1.csv")
+  d3.csv("data1.csv")
     .then(function(data) {
       // Once the data is loaded, you can work with it here
 
