@@ -4,17 +4,859 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Title Page</title>
-  <link rel="stylesheet" href="style.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
-<body>
-  <div class="title-container">
-    <!-- Replace the text and image with your own title and logo -->
-    <div class="title">Cost of Insurance Statistics</div>
-    <div class="subtitle">Text here</div>
-    <div>
-        <a href="agevcharges.html"><button type="button" class="btn btn-primary btn-lg">Start</button></a>
+<body style="background-color: rgb(180, 180, 180);">
+    <div class=" title text-center">
+        <h1 class = "m-3">Insurance - Narrative Visualization</h1>
     </div>
-  </div>
+    <hr class="border border-danger border-2"/>
+    <div class="container m-2">
+        <section id="Overview">
+            <h1 style=font-size:30px> Overview </h1>
+            <div class="text-justify">
+            This is a visualization about the insurance charges which individuals face and the potential reasons behind one paying more in insurance (children, bmi, age, smoking, etc.). The main aim is to figure out the trends for the insurance charges. 
+            </div>
+            <br/>
+            <p><b> How age affects the charges one faces... </b></p>
+            <button class='button' onclick="showavgage();"> Average per Age </button>
+            <button class='button' onclick="showallage();"> All Data </button>
+            <br/>
+            <svg class="bg-light m-4 border border-dark" id='age-charges' width='800' height="350"float="left" display='none'></svg>
+            <svg class="bg-light m-4 border border-dark" id='avg-age-charges' width='800' height="350"float="left"></svg>
+            <p><b> Some key observations based on the data/chart above </b></p>
+            <li>Without averaging out the charges per age, the data isn't easily readable as each age group incurs a large range of charges.</li>
+            <li>Once the data is averaged per age, <b>a positive correlation</b> between age and insurance charges can be seen. </li>
+            <br>        
+        </section>
+    </div>
+
+    <div class="container m-2">
+        <section id="rating">
+            <h1 style=font-size:30px>Factors that might be affecting the Charges</h1>
+            <p> The graph below shows the relationship between the insurance charges and considered details of an individual.
+            <br/>
+            <i>Toggle between the different metrics below</i>
+            </p>
+            <button class='button' onclick="showsmoker();"> Smoking Habits </button>
+            <button class='button' onclick="showbmi();"> BMI </button>
+            <button class='button' onclick="showsex();"> Gender </button>
+            <button class='button' onclick="showchildren();"> Children </button>
+            <br>
+            <svg class="bg-light m-4 border border-dark" id='bmi-charges' width='800' height="350"float="left" display="none"></svg>
+            <svg class="bg-light m-4 border border-dark" id='sex-age' width='800' height="350" float="left" display="none"></svg>
+            <svg class="bg-light m-4 border border-dark" id='smoker-age' width='800' height="350"float="left"></svg>
+            <svg class="bg-light m-4 border border-dark" id='children-charges' width='800' height="350"float="left" display='none'></svg>
+            <br/>
+            Here are the noticeable takeaways from these graphs:
+            <br>
+            <br>
+                1. Smokers on average pay more than non-smokers in insurance charges.
+            <br>
+                2. People with a higher BMI seem to incur more charges than people with lower BMIs. However, it seems to not make a significant impact. 
+            <br>
+                3. The gender of the individual makes no impact on the amount that they pay in insurance.
+            <br>
+                4. Number of children is a factor which affects how much one pays in insurance, but interestingly people with 4+ children pay less. It follows a bell curve with the peak being at 3 children.
+            <br>
+            <br>
+        </section>
+    </div>
+
+    <div class="container m-2">
+        <section id="rating">
+            <h1 style=font-size:30px>Let'd dig further into information about smokers...</h1>
+            <p> Seeing as the most impacting factor is whether a person is a smoker or not, we can dig further into this information. Below you can see the correlation of average charges within a region and compare it with the number of smokers that love in that region.
+            <br>
+            <i>Toggle between the different metrics below to compare.</i>
+            </p>
+            <button class='button' onclick="showregionalcharges();"> Average Regional Charges </button>
+            <button class='button' onclick="showregionalsmokers();"> Smokers within the Region </button>
+            <br>
+            <svg class="bg-light m-4 border border-dark" id='region-charges' width='800' height="350"float="left"></svg>
+            <svg class="bg-light m-4 border border-dark" id='region-smokers' width='800' height="350" float="left" display='none'></svg>
+
+            <p> We can see that the <b>Southeast</b> and <b>Northeast</b> regions have the highest average insurance charges and also house the most number of smokers. Hence, we can confirm that smoking is a major factor in how much someone pays for insurance.
+        </section>
+    </div>
+    <div class="container m-2">
+        <section id="sources">
+            <h2> Appendix </h2>
+            <ul>
+                <li><a class ="text-dark" href="https://www.kaggle.com/datasets/alexisbcook/data-for-datavis">Dataset</a></li>
+            </ul>
+        </section>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>	      
+    <script>
+
+        // show the avg age graph
+        function showregionalcharges(){
+            var charges = document.getElementById("region-charges")
+            charges.style.display="block"
+            var smokers = document.getElementById("region-smokers")
+            smokers.style.display="none" 
+        }
+
+        // show the avg age graph
+        function showregionalsmokers(){
+            var charges= document.getElementById("region-charges")
+            charges.style.display="none"
+            var smokers = document.getElementById("region-smokers")
+            smokers.style.display="block" 
+        }
+
+        // show the avg age graph
+        function showallage(){
+            var age = document.getElementById("age-charges")
+            age.style.display="block"
+            var avg = document.getElementById("avg-age-charges")
+            avg.style.display="none" 
+        }
+
+        // show the avg age graph
+        function showavgage(){
+            var age = document.getElementById("age-charges")
+            age.style.display="none"
+            var avg = document.getElementById("avg-age-charges")
+            avg.style.display="block"
+        }
+
+        // show the bmi graph
+        function showbmi(){
+            var bmi = document.getElementById("bmi-charges")
+            bmi.style.display="block"
+            var sex = document.getElementById("sex-age")
+            sex.style.display="none"
+            var smoker = document.getElementById("smoker-age")
+            smoker.style.display="none"
+            var children = document.getElementById("children-charges")
+            children.style.display="none"
+        }
+
+
+        // show the sex graph
+        function showsex(){
+            var bmi = document.getElementById("bmi-charges")
+            bmi.style.display="none"
+            var sex = document.getElementById("sex-age")
+            sex.style.display="block"
+            var smoker = document.getElementById("smoker-age")
+            smoker.style.display="none"
+            var children = document.getElementById("children-charges")
+            children.style.display="none"
+        }
+
+        // show the smoker graph
+        function showsmoker(){
+            var bmi = document.getElementById("bmi-charges")
+            bmi.style.display="none"
+            var sex = document.getElementById("sex-age")
+            sex.style.display="none"
+            var smoker = document.getElementById("smoker-age")
+            smoker.style.display="block"
+            var children = document.getElementById("children-charges")
+            children.style.display="none"
+        }
+
+        // show the children graph
+        function showchildren(){
+            var bmi = document.getElementById("bmi-charges")
+            bmi.style.display="none"
+            var sex = document.getElementById("sex-age")
+            sex.style.display="none"
+            var smoker = document.getElementById("smoker-age")
+            smoker.style.display="none"
+            var children = document.getElementById("children-charges")
+            children.style.display="block"
+        }
+
+        var age_charges = d3.select('#age-charges');
+        var avg_age_charges = d3.select('#avg-age-charges');
+        var bmi_charges = d3.select('#bmi-charges');
+        var sex_age = d3.select('#sex-age');
+        var smoker_age = d3.select('#smoker-age');
+        var children_charges = d3.select('#children-charges');
+        var region_charges = d3.select('#region-charges');
+        var region_smoker = d3.select('#region-smokers');
+        
+        // setting parameters
+        var margin = { top: 50, right: 50, bottom: 70, left: 90 };
+        var width = +age_charges.attr("width") - margin.left - margin.right;
+        var height = +age_charges.attr("height") - margin.top - margin.bottom;
+
+        var g_age_charges = age_charges.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+        var g_avg_age_charges = avg_age_charges.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+        var g_bmi_charges = bmi_charges.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+        var g_sex_age = sex_age.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+        var g_smoker_age = smoker_age.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+        var g_children_charges = children_charges.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+        var g_region_charges = region_charges.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+        var g_region_smoker = region_smoker.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+
+        d3.csv("insurance.csv").then(function(data) {
+
+            const x = d3.scaleLinear()
+                .domain([15, 68])
+                .range([0, width]);
+
+            const y = d3.scaleLinear()
+                .domain([0, 70000])
+                .range([height, 0]);
+
+            // Create the SVG container
+            g_age_charges.append('g')
+                .selectAll("dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d.age))
+                .attr("cy", d => y(d.charges))
+                .attr("r", 5)
+                .attr("fill", "black");
+
+            // Append x-axis
+            g_age_charges.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x));
+
+            // Append y-axis
+            g_age_charges.append("g")
+                .call(d3.axisLeft(y));
+
+            // Append x-axis label
+            g_age_charges.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 30)
+                .attr("text-anchor", "middle")
+                .text("Age");
+
+            // Append y-axis label
+            g_age_charges.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 30)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Average Charges");
+
+            g_age_charges.append("text")
+                .attr("x", 130)
+                .attr("y", 0)
+                .attr("text-anchor", "middle")
+                .style("font-weight", "bold")
+                .text(`Trend not easily seen!!`);
+
+        })
+        .catch(function(error) {
+            // If there's an error loading the data, handle it here
+            console.error("Error loading data:", error);
+        });
+
+        d3.csv("insurance.csv").then(function(data) {
+
+            const averageData = d3.rollups(
+                data,
+                v => d3.mean(v, d => d.charges),
+                d => d.age
+            );
+
+            // Convert the averageData array to objects with age and average_cost properties
+            const averageDataset = averageData.map(([age, average_cost]) => ({
+                age: Number(age), // Ensure age is treated as a number
+                average_cost: average_cost
+            }));
+        
+            const x = d3.scaleLinear()
+                .domain([15, 68])
+                .range([0, width]);
+
+            const y = d3.scaleLinear()
+                .domain([0, 27000])
+                .range([height, 0]);
+
+            // Create the SVG container
+            g_avg_age_charges.append('g')
+                .selectAll("dot")
+                .data(averageDataset)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d.age))
+                .attr("cy", d => y(d.average_cost))
+                .attr("r", 5)
+                .attr("fill", "black");
+
+            // Append x-axis
+            g_avg_age_charges.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x));
+
+            // Append y-axis
+            g_avg_age_charges.append("g")
+                .call(d3.axisLeft(y));
+
+            g_avg_age_charges.append("line")
+                .attr("stroke", "red")
+                .attr("stroke-width", 2)
+                .attr("x1", 20)
+                .attr("y1", 180)
+                .attr("x2", 650)
+                .attr("y2", 40)
+                .style("display", "block");
+
+            // Append x-axis label
+            g_avg_age_charges.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 30)
+                .attr("text-anchor", "middle")
+                .text("Age");
+
+            // Append y-axis label
+            g_avg_age_charges.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 30)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Average Charges");
+
+        })
+        .catch(function(error) {
+            // If there's an error loading the data, handle it here
+            console.error("Error loading data:", error);
+        });
+
+        d3.csv('insurance.csv').then(function(data) {
+            
+            const x = d3.scaleLinear()
+                .domain([15, 68])
+                .range([0, width]);
+
+            const y = d3.scaleLinear()
+                .domain([0, 70000])
+                .range([height, 0]);
+
+                // Create the SVG container
+            g_bmi_charges.append('g')
+                .selectAll("dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d.bmi))
+                .attr("cy", d => y(d.charges))
+                .attr("r", 3)
+                .attr("fill", "black");
+
+            // Append x-axis
+            g_bmi_charges.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x));
+
+            // Append y-axis
+            g_bmi_charges.append("g")
+                .call(d3.axisLeft(y));
+
+            // Append x-axis label
+            g_bmi_charges.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 30)
+                .attr("text-anchor", "middle")
+                .text("Age");
+
+            // Append y-axis label
+            g_bmi_charges.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 30)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Average Charges");
+        })
+        .catch(function(error) {
+            // If there's an error loading the data, handle it here
+            console.error("Error loading data:", error);
+        });
+
+        d3.csv('insurance.csv').then(function(data) {
+        
+            const x = d3.scaleLinear()
+                .domain([15, 68])
+                .range([0, width]);
+
+            const y = d3.scaleLinear()
+                .domain([0, 30000])
+                .range([height, 0]);
+
+            // Split the data into male and female charges
+            const maleData = data.filter(d => d.sex === "male");
+
+            const maleAverageData = d3.rollups(
+                maleData,
+                v => d3.mean(v, d => d.charges),
+                d => d.age
+            );
+
+            // Convert the averageData array to objects with age and average_cost properties
+            const maleAverageDataset = maleAverageData.map(([age, average_cost]) => ({
+                age: Number(age), // Ensure age is treated as a number
+                average_cost: average_cost
+            }));
+
+            const femaleData = data.filter(d => d.sex === "female");
+
+            const femaleAverageData = d3.rollups(
+                femaleData,
+                v => d3.mean(v, d => d.charges),
+                d => d.age
+            );
+
+            // Convert the averageData array to objects with age and average_cost properties
+            const femaleAverageDataset = femaleAverageData.map(([age, average_cost]) => ({
+                age: Number(age), // Ensure age is treated as a number
+                average_cost: average_cost
+            }));
+
+            // Create the SVG container
+            g_sex_age.append('g')
+                .selectAll("dot")
+                .data(maleAverageDataset)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d.age))
+                .attr("cy", d => y(d.average_cost))
+                .attr("r", 3)
+                .attr("fill", "blue");
+            
+                // Create the SVG container
+            g_sex_age.append('g')
+                .selectAll("dot")
+                .data(femaleAverageDataset)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d.age))
+                .attr("cy", d => y(d.average_cost))
+                .attr("r", 3)
+                .attr("fill", "pink");
+
+            // Append x-axis
+            g_sex_age.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x));
+
+            // Append y-axis
+            g_sex_age.append("g")
+                .call(d3.axisLeft(y));
+
+            // Append x-axis label
+            g_sex_age.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 30)
+                .attr("text-anchor", "middle")
+                .text("Age");
+
+            // Append y-axis label
+            g_sex_age.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 30)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Average Charges");
+        })
+        .catch(function(error) {
+            // If there's an error loading the data, handle it here
+            console.error("Error loading data:", error);
+        });
+
+        d3.csv('insurance.csv').then(function(data) {
+        
+        const x = d3.scaleLinear()
+            .domain([15, 68])
+            .range([0, width]);
+
+        const y = d3.scaleLinear()
+            .domain([0, 55000])
+            .range([height, 0]);
+
+        // Split the data into male and female charges
+        const smokerData = data.filter(d => d.smoker === "yes");
+
+        const smokerAverageData = d3.rollups(
+            smokerData,
+            v => d3.mean(v, d => d.charges),
+            d => d.age
+        );
+
+        // Convert the averageData array to objects with age and average_cost properties
+        const smokerAverageDataset = smokerAverageData.map(([age, average_cost]) => ({
+            age: Number(age), // Ensure age is treated as a number
+            average_cost: average_cost
+        }));
+
+        const nonSmokerData = data.filter(d => d.smoker === "no");
+
+        const nonSmokerAverageData = d3.rollups(
+            nonSmokerData,
+            v => d3.mean(v, d => d.charges),
+            d => d.age
+        );
+
+        // Convert the averageData array to objects with age and average_cost properties
+        const nonSmokerAverageDataset = nonSmokerAverageData.map(([age, average_cost]) => ({
+            age: Number(age), // Ensure age is treated as a number
+            average_cost: average_cost
+        }));
+
+        // Create the SVG container
+        g_smoker_age.append('g')
+            .selectAll("dot")
+            .data(smokerAverageDataset)
+            .enter()
+            .append("circle")
+            .attr("cx", d => x(d.age))
+            .attr("cy", d => y(d.average_cost))
+            .attr("r", 3)
+            .attr("fill", "red");
+        
+            // Create the SVG container
+        g_smoker_age.append('g')
+            .selectAll("dot")
+            .data(nonSmokerAverageDataset)
+            .enter()
+            .append("circle")
+            .attr("cx", d => x(d.age))
+            .attr("cy", d => y(d.average_cost))
+            .attr("r", 3)
+            .attr("fill", "green");
+
+        // Append x-axis
+        g_smoker_age.append("g")
+            .attr("transform", `translate(0, ${height})`)
+            .call(d3.axisBottom(x));
+
+        // Append y-axis
+        g_smoker_age.append("g")
+            .call(d3.axisLeft(y));
+
+        // Append x-axis label
+        g_smoker_age.append("text")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 30)
+            .attr("text-anchor", "middle")
+            .text("Age");
+
+        // Append y-axis label
+            g_smoker_age.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 30)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Average Charges");
+        })
+        .catch(function(error) {
+            // If there's an error loading the data, handle it here
+            console.error("Error loading data:", error);
+        });
+
+    d3.csv("insurance.csv").then(function(data) {
+            console.log(data);
+
+            // Process the data
+            data.forEach(d => {
+                d.children = +d.children; // Convert children to a number
+                d.charges = +d.charges; // Convert charges to a number
+            });
+
+            // Calculate the average charges for each number of children using d3.rollup()
+            const averageData = d3.rollup(
+                data,
+                v => d3.mean(v, d => d.charges),
+                d => d.children
+            );
+
+            // Convert the rollup results back to an array of objects
+            const averageDataset = Array.from(averageData, ([children, average_charges]) => ({
+                children,
+                average_charges,
+            }));
+
+            // Sort the data based on the number of children in ascending order
+            averageDataset.sort((a, b) => d3.ascending(a.children, b.children));
+
+            const xScale = d3.scaleBand()
+                .domain(averageDataset.map(d => d.children))
+                .range([0, width])
+                .padding(0.1);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, 17000])
+                .range([height, 0]);
+
+            // Append the bars
+            g_children_charges.selectAll(".bar")
+                .data(averageDataset)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => xScale(d.children))
+                .attr("y", d => yScale(d.average_charges))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => height - yScale(d.average_charges))
+                .attr("fill", "steelblue");
+
+            // Append the text showing the number of smokers above each bar
+            g_children_charges.selectAll(".bar-label")
+                .data(averageDataset)
+                .enter()
+                .append("text")
+                .attr("class", "bar-label")
+                .attr("x", d => xScale(d.children) + xScale.bandwidth() / 2)
+                .attr("y", d => yScale(d.average_charges) - 5) // Adjust the vertical position of the text
+                .attr("text-anchor", "middle")
+                .text(d => "$ " + parseInt(d.average_charges));
+
+            // Append x-axis
+            g_children_charges.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(xScale));
+
+            // Append y-axis
+            g_children_charges.append("g")
+                .call(d3.axisLeft(yScale));
+
+            // Append x-axis label
+            g_children_charges.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 30)
+                .attr("text-anchor", "middle")
+                .text("Number of Children");
+
+            // Append y-axis label
+            g_children_charges.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 30)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Average Charges");
+
+        })
+        .catch(function(error) {
+        // If there's an error loading the data, handle it here
+        console.error("Error loading data:", error);
+        });
+
+        // Load CSV data
+        d3.csv("insurance.csv").then(function(data) {
+            console.log(data);
+            
+            // Calculate the average charges for each region using d3.rollup()
+            const averageData = d3.rollup(
+                data,
+                v => d3.mean(v, d => d.charges),
+                d => d.region
+            );
+
+            // Convert the rollup results back to an array of objects
+            const averageDataset = Array.from(averageData, ([region, average_charges]) => ({
+                region,
+                average_charges,
+            }));
+
+            averageDataset.sort((a, b) => d3.ascending(b.average_charges, a.average_charges));
+
+            const xScale = d3.scaleBand()
+                .domain(averageDataset.map(d => d.region))
+                .range([0, width])
+                .padding(0.1);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, 17000])
+                .range([height, 0]);
+
+            // Append the bars
+            g_region_charges.selectAll(".bar")
+                .data(averageDataset)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => xScale(d.region))
+                .attr("y", d => yScale(d.average_charges))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => height - yScale(d.average_charges))
+                .attr("fill", "steelblue");
+
+
+            // Append the text showing the number of smokers above each bar
+            g_region_charges.selectAll(".bar-label")
+                .data(averageDataset)
+                .enter()
+                .append("text")
+                .attr("class", "bar-label")
+                .attr("x", d => xScale(d.region) + xScale.bandwidth() / 2)
+                .attr("y", d => yScale(d.average_charges) - 5) // Adjust the vertical position of the text
+                .attr("text-anchor", "middle")
+                .text(d => "$ " + parseInt(d.average_charges));
+
+            // Append x-axis
+            g_region_charges.append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(xScale));
+
+            // Append y-axis
+            g_region_charges.append("g")
+                .attr("class", "y-axis")
+                .call(d3.axisLeft(yScale));
+
+            // Append x-axis label
+            g_region_charges.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 20)
+                .attr("text-anchor", "middle")
+                .text("Average Age");
+
+            // Append y-axis label
+            g_region_charges.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 20)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Average Charges");
+
+            // Find the data point with the highest value
+            const largestDataPoint = d3.max(averageDataset, d => d.average_charges);
+
+            // Add annotation above the largest bar
+            const largestBar = g_region_charges.select(".bar:nth-child(1)"); // Assumes the largest bar is the first one after sorting
+            const largestBarX = parseFloat(largestBar.attr("x")) + xScale.bandwidth();
+            const largestBarY = parseFloat(largestBar.attr("y") - 100);
+
+            g_region_charges.append("line")
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .attr("x1", 85)
+                .attr("y1", 31)
+                .attr("x2", 450)
+                .attr("y2", 10)
+                .style("display", "block");
+
+            g_region_charges.append("text")
+                .attr("x", 450)
+                .attr("y", 0)
+                .attr("text-anchor", "middle")
+                .style("font-weight", "bold")
+                .text(`Southeast region pays the most in insurance.`);
+
+        }).catch(function(error) {
+            // If there's an error loading the data, handle it here
+            console.error("Error loading data:", error);
+        });
+
+
+        // Load CSV data
+        d3.csv("insurance.csv").then(function(data) {
+            console.log(data);
+
+            const xScale = d3.scaleBand().range([0, width]).padding(0.1);
+            const yScale = d3.scaleLinear().range([height, 0]);
+            // Process the data
+            data.forEach(d => {
+                d.smoker = d.smoker === "yes" ? "Smoker" : "Non-Smoker";
+            });
+
+            // Calculate the total smokers for each region
+            const smokerData = d3.rollups(
+                data,
+                v => d3.sum(v, d => d.smoker === "Smoker" ? 1 : 0),
+                d => d.region
+            );
+
+            // Convert the rollup results back to an array of objects
+            const averageDataset = Array.from(smokerData, ([region, smokers]) => ({
+                region,
+                smokers,
+            }));
+
+            averageDataset.sort((a, b) => d3.ascending(b.smokers, a.smokers));
+
+            // Set the scales domain based on the data
+            xScale.domain(averageDataset.map(d => d.region));
+            yScale.domain([0, 95]);
+
+            // Append the data bars
+            g_region_smoker.selectAll(".bar")
+                .data(smokerData)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => xScale(d[0]))
+                .attr("y", d => yScale(d[1]))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => height - yScale(d[1]))
+                .attr("fill", "steelblue");
+
+            // Append the text showing the number of smokers above each bar
+            g_region_smoker.selectAll(".bar-label")
+                .data(averageDataset)
+                .enter()
+                .append("text")
+                .attr("class", "bar-label")
+                .attr("x", d => xScale(d.region) + xScale.bandwidth() / 2)
+                .attr("y", d => yScale(d.smokers) - 5) // Adjust the vertical position of the text
+                .attr("text-anchor", "middle")
+                .text(d => d.smokers);
+
+            // Append x-axis
+            g_region_smoker.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(xScale));
+
+            // Append y-axis
+            g_region_smoker.append("g")
+                .call(d3.axisLeft(yScale));
+
+            // Append x-axis label
+            g_region_smoker.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 20)
+                .attr("text-anchor", "middle")
+                .text("Region");
+
+            // Append y-axis label
+            g_region_smoker.append("text")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left + 20)
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .text("Total Smokers");
+
+            // Find the data point with the highest value
+            const largestDataPoint = d3.max(averageDataset, d => d.smokers);
+
+            // Add annotation above the largest bar
+            const largestBar = g_region_smoker.select(".bar:nth-child(1)"); // Assumes the largest bar is the first one after sorting
+            const largestBarX = parseFloat(largestBar.attr("x")) + xScale.bandwidth();
+            const largestBarY = parseFloat(largestBar.attr("y") - 100);
+
+            g_region_smoker.append("line")
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .attr("x1", largestBarX - 400)
+                .attr("y1", largestBarY + 20)
+                .attr("x2", largestBarX)
+                .attr("y2", largestBarY + 10)
+                .style("display", "block");
+
+            g_region_smoker.append("text")
+                .attr("x", largestBarX - 50)
+                .attr("y", largestBarY)
+                .attr("text-anchor", "middle")
+                .style("font-weight", "bold")
+                .text(`Southeast region also has the highest number of smokers.`);
+
+        }).catch(function(error) {
+            // If there's an error loading the data, handle it here
+            console.error("Error loading data:", error);
+        });
+
+    </script>
 </body>
 </html>
