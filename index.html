@@ -7,32 +7,57 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
 <body style="background-color: rgb(180, 180, 180);">
-    <div class=" title text-center">
-        <h1 class = "m-3">Insurance - Narrative Visualization</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" id="sideNav">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav" style="list-style: none;">
+              <li class="nav-item"> 
+              <a class="nav-link " href="#overview"> Overview </a>
+              </li>    
+            <br>
+            <li class="nav-item">
+               <a class="nav-link" href="#factors"> Factors affecting charges </a>
+              </li>
+            <br>  
+              <li class="nav-item">
+               <a class="nav-link " href="#smokers"> Drill down into smokers </a>
+              </li>
+            <br> 
+              <li class="nav-item">
+               <a class="nav-link " href="#sources"> Appendix </a>
+              </li>
+            </ul> 
+        </div>
+    </nav>
+    
+    <div id="overview" class="title text-center">
+        <h1 class = "m-3">Factors affecting Insurance Charges</h1>
     </div>
+
     <hr class="border border-danger border-2"/>
+
     <div class="container m-2">
-        <section id="Overview">
+        <section >
             <h1 style=font-size:30px> Overview </h1>
             <div class="text-justify">
             This is a visualization about the insurance charges which individuals face and the potential reasons behind one paying more in insurance (children, bmi, age, smoking, etc.). The main aim is to figure out the trends for the insurance charges. 
             </div>
             <br/>
             <p><b> How age affects the charges one faces... </b></p>
-            <button class='button' onclick="showavgage();"> Average per Age </button>
-            <button class='button' onclick="showallage();"> All Data </button>
+            <button class='button' onclick="showavgage();"> Average charges per Age </button>
+            <button class='button' onclick="showallage();"> Charges for all individuals </button>
             <br/>
             <svg class="bg-light m-4 border border-dark" id='age-charges' width='800' height="350"float="left" display='none'></svg>
             <svg class="bg-light m-4 border border-dark" id='avg-age-charges' width='800' height="350"float="left"></svg>
             <p><b> Some key observations based on the data/chart above </b></p>
             <li>Without averaging out the charges per age, the data isn't easily readable as each age group incurs a large range of charges.</li>
             <li>Once the data is averaged per age, <b>a positive correlation</b> between age and insurance charges can be seen. </li>
-            <br>        
+            <br id="factors"/> 
+            <a class="button" href="#factors" font-size='40px'> Next </a>       
         </section>
     </div>
 
     <div class="container m-2">
-        <section id="rating">
+        <section >
             <h1 style=font-size:30px>Factors that might be affecting the Charges</h1>
             <p> The graph below shows the relationship between the insurance charges and considered details of an individual.
             <br/>
@@ -60,25 +85,32 @@
                 4. Number of children is a factor which affects how much one pays in insurance, but interestingly people with 4+ children pay less. It follows a bell curve with the peak being at 3 children.
             <br>
             <br>
+            <a id ="smokers" class="button" href="#smokers" font-size='40px'> Next </a>  
+            <br/>
+            <a class="button" href="#overview" font-size='40px'> Back </a>   
         </section>
     </div>
 
-    <div class="container m-2">
-        <section id="rating">
+    <div  class="container m-2">
+        <section>
             <h1 style=font-size:30px>Let'd dig further into information about smokers...</h1>
             <p> Seeing as the most impacting factor is whether a person is a smoker or not, we can dig further into this information. Below you can see the correlation of average charges within a region and compare it with the number of smokers that love in that region.
             <br>
             <i>Toggle between the different metrics below to compare.</i>
             </p>
             <button class='button' onclick="showregionalcharges();"> Average Regional Charges </button>
-            <button class='button' onclick="showregionalsmokers();"> Smokers within the Region </button>
+            <button class='button' onclick="showregionalsmokers();"> Number of Smokers within each Region </button>
             <br>
             <svg class="bg-light m-4 border border-dark" id='region-charges' width='800' height="350"float="left"></svg>
             <svg class="bg-light m-4 border border-dark" id='region-smokers' width='800' height="350" float="left" display='none'></svg>
 
             <p> We can see that the <b>Southeast</b> and <b>Northeast</b> regions have the highest average insurance charges and also house the most number of smokers. Hence, we can confirm that smoking is a major factor in how much someone pays for insurance.
+            <br/>
+            <br/>
+            <a class="button" href="#overview" font-size='40px'> Return to Top </a>
         </section>
     </div>
+   
     <div class="container m-2">
         <section id="sources">
             <h2> Appendix </h2>
@@ -301,9 +333,13 @@
                 .attr("stroke-width", 2)
                 .attr("x1", 20)
                 .attr("y1", 180)
-                .attr("x2", 650)
-                .attr("y2", 40)
-                .style("display", "block");
+                .attr("x2", 20)
+                .attr("y2", 180)
+                .style("display", "block")
+                .transition() // Apply the transition
+                .duration(1500) // Set the duration of the animation in milliseconds
+                .attr("x2", 650) // Animate the line to the end point (650, 40)
+                .attr("y2", 40);;
 
             // Append x-axis label
             g_avg_age_charges.append("text")
